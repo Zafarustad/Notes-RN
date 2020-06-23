@@ -1,0 +1,116 @@
+import {
+  TRIGGER_ERROR,
+  CLEAR_ERROR,
+  SET_AUTHETICATION,
+  AUTH_USER_DETAILS,
+  USER_NOTES,
+  USER_ARCHIVE_NOTES,
+  ADD_NOTE,
+  ARCHIVE_NOTE,
+  UNARCHIVE_NOTE,
+  DELETE_NOTE,
+  SUCCESS_MESSAGE,
+} from '../Actions/dataAction';
+
+const initailState = {
+  authenticated: null,
+  credentials: {},
+  notes: null,
+  archiveNotes: null,
+  errors: null,
+  successMessage: null,
+  errorMessage: null,
+};
+
+const dataReducer = (state = initailState, action) => {
+  switch (action.type) {
+    case TRIGGER_ERROR: {
+      return {
+        ...state,
+        errors: action.payload,
+      };
+    }
+    case CLEAR_ERROR: {
+      return {
+        ...state,
+        errors: null,
+      };
+    }
+
+    case SUCCESS_MESSAGE: {
+      return {
+        ...state,
+        successMessage: action.payload,
+      };
+    }
+    case SET_AUTHETICATION: {
+      return {
+        ...state,
+        authenticated: action.payload,
+      };
+    }
+    case AUTH_USER_DETAILS: {
+      return {
+        ...state,
+        credentials: action.payload,
+      };
+    }
+    case USER_NOTES: {
+      return {
+        ...state,
+        notes: action.payload,
+      };
+    }
+    case USER_ARCHIVE_NOTES: {
+      return {
+        ...state,
+        archiveNotes: action.payload,
+      };
+    }
+    case ADD_NOTE: {
+      return {
+        ...state,
+        notes: [action.payload.data, ...state.notes],
+      };
+    }
+    case ARCHIVE_NOTE: {
+      const filteredNotes = state.notes.filter(
+        (note) => note._id !== action.payload,
+      );
+      return {
+        ...state,
+        notes: filteredNotes,
+      };
+    }
+
+    case UNARCHIVE_NOTE: {
+      const filteredNotes = state.archiveNotes.filter(
+        (note) => note._id !== action.payload,
+      );
+      return {
+        ...state,
+        archiveNotes: filteredNotes,
+      };
+    }
+
+    case DELETE_NOTE: {
+      const filteredNotes =
+        action.payload.route === 'Archive'
+          ? state.archiveNotes.filter((note) => note._id !== action.payload.id)
+          : state.notes.filter((note) => note._id !== action.payload.id);
+      return action.payload.route === 'Archive'
+        ? {
+            ...state,
+            archiveNotes: filteredNotes,
+          }
+        : {
+            ...state,
+            notes: filteredNotes,
+          };
+    }
+    default:
+      return state;
+  }
+};
+
+export default dataReducer;
