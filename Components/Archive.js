@@ -1,5 +1,4 @@
 import React, {useEffect} from 'react';
-import {StyleSheet} from 'react-native';
 import {getArchiveUserNotesDispatch} from '../Actions/dataAction';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
@@ -39,27 +38,3 @@ const mapDispatchToProps = (dispatch) =>
   );
 export default connect(mapStateToProps, mapDispatchToProps)(Archive);
 
-const styles = StyleSheet.create({
-  ActivityIndicator: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  animatedView: {
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 10,
-    margin: 10,
-    borderBottomWidth: 0.5,
-  },
-  noNotesCont: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  noNotesText: {
-    fontSize: 25,
-    marginTop: 5,
-  },
-});

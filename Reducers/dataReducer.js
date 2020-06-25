@@ -1,4 +1,5 @@
 import {
+  LOGOUT_USER,
   TRIGGER_ERROR,
   CLEAR_ERROR,
   SET_AUTHETICATION,
@@ -10,6 +11,8 @@ import {
   UNARCHIVE_NOTE,
   DELETE_NOTE,
   SUCCESS_MESSAGE,
+  NOTE_DONE,
+  NOTE_UNDONE,
 } from '../Actions/dataAction';
 
 const initailState = {
@@ -24,6 +27,13 @@ const initailState = {
 
 const dataReducer = (state = initailState, action) => {
   switch (action.type) {
+    case LOGOUT_USER: {
+      return {
+        ...state,
+        notes: null,
+        archiveNotes: null
+      }
+    }
     case TRIGGER_ERROR: {
       return {
         ...state,
@@ -108,6 +118,28 @@ const dataReducer = (state = initailState, action) => {
             notes: filteredNotes,
           };
     }
+
+    case NOTE_DONE: {
+      const index = state.notes.findIndex(
+        (note) => note._id === action.payload.id,
+      );
+      state.notes[index].done = action.payload.value;
+
+      return {
+        ...state,
+      };
+    }
+    case NOTE_UNDONE: {
+      const index = state.notes.findIndex(
+        (note) => note._id === action.payload.id,
+      );
+      state.notes[index].done = action.payload.value;
+
+      return {
+        ...state,
+      };
+    }
+
     default:
       return state;
   }

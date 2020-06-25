@@ -9,7 +9,7 @@ import {
   DrawerItem,
 } from '@react-navigation/drawer';
 import FlashMessage, {showMessage} from 'react-native-flash-message';
-import {setAuthentication} from '../Actions/dataAction';
+import {setAuthentication, logoutUserAction} from '../Actions/dataAction';
 import {checkAsyncStorageToken, removeAsyncStorageToken} from '../utils/utils';
 import Signup from '../Components/Signup';
 import Login from '../Components/Login';
@@ -32,8 +32,9 @@ const Routes = (props) => {
   }, []);
 
   const logoutUser = async (navigation) => {
-    const {setAuthentication} = props;
+    const {setAuthentication, logoutUserAction} = props;
     await removeAsyncStorageToken();
+    logoutUserAction();
     navigation.closeDrawer();
     setAuthentication(false);
   };
@@ -60,7 +61,7 @@ const Routes = (props) => {
   if (successMessage) {
     showMessage({
       message: successMessage,
-      type: successMessage === 'Note Deleted!' ? 'warning' : 'success',
+      type: successMessage === 'Note Deleted!' ? 'danger' : 'success',
     });
   }
 
@@ -120,6 +121,7 @@ const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
     {
       setAuthentication,
+      logoutUserAction,
     },
     dispatch,
   );

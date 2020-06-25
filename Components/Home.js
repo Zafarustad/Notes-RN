@@ -1,5 +1,4 @@
 import React, {useEffect} from 'react';
-import {View, Text, Dimensions, TouchableOpacity} from 'react-native';
 import {
   setAuthentication,
   getAuthUserDetailsDispatch,
@@ -11,12 +10,10 @@ import Notes from './Notes';
 import Drawer from './Drawer';
 import AddNote from './AddNote';
 
-const width = Dimensions.get('window').width;
-
 const Home = (props) => {
   const {
     data: {notes},
-    route: {name}
+    route: {name},
   } = props;
 
   useEffect(() => {
@@ -27,13 +24,13 @@ const Home = (props) => {
     const {getAuthUserDetailsDispatch, getUserNotesDispatch} = props;
     await getAuthUserDetailsDispatch();
     await getUserNotesDispatch();
-  };  
+  };
 
   return (
     <>
       <Drawer navigation={props.navigation} />
       <AddNote />
-      <Notes notes={notes} route={name}/>
+      <Notes notes={notes} route={name} />
     </>
   );
 };

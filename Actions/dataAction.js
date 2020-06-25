@@ -1,6 +1,7 @@
 import axios from 'axios';
 import {setAsyncStorageToken} from '../utils/utils';
 
+export const LOGOUT_USER = 'LOGOUT_USER';
 export const TRIGGER_ERROR = 'TRIGGER_ERROR';
 export const CLEAR_ERROR = 'CLEAR_ERROR';
 export const SUCCESS_MESSAGE = 'SUCCESS_MESSAGE';
@@ -12,8 +13,14 @@ export const ADD_NOTE = 'ADD_NOTE';
 export const ARCHIVE_NOTE = 'ARCHIVE_NOTE';
 export const UNARCHIVE_NOTE = 'UNARCHIVE_NOTE';
 export const DELETE_NOTE = 'DELETE_NOTE';
+export const NOTE_DONE = 'NOTE_DONE';
+export const NOTE_UNDONE = 'NOTE_UNDONE';
 
-const uri = process.env.REACT_APP_API_ENDPOINT;
+const uri = 'https://7dc9b31f7c86.ngrok.io';
+
+export const logoutUserAction = () => ({
+  type: LOGOUT_USER,
+});
 
 export const triggerErrorAction = (data) => ({
   type: TRIGGER_ERROR,
@@ -66,6 +73,16 @@ export const unarchiveNoteAction = (data) => ({
 
 export const deleteNoteAction = (data) => ({
   type: DELETE_NOTE,
+  payload: data,
+});
+
+export const markeNoteDoneAction = (data) => ({
+  type: NOTE_DONE,
+  payload: data,
+});
+
+export const markeNoteUndoneAction = (data) => ({
+  type: NOTE_UNDONE,
   payload: data,
 });
 
@@ -165,6 +182,26 @@ export const deleteNoteDispatch = (id, route) => async (dispatch) => {
     setTimeout(() => {
       dispatch(triggorSuccessMessage(null));
     }, 3000);
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+export const markeNoteDoneDispatch = (id, value) => async (dispatch) => {
+  try {
+    let data = {id, value};
+    dispatch(markeNoteDoneAction(data));
+    await axios.put(`${uri}/done/${id}`);
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+export const markeNoteUndoneDispatch = (id, value) => async (dispatch) => {
+  try {
+    let data = {id, value};
+    dispatch(markeNoteUndoneAction(data));
+    await axios.put(`${uri}/undone/${id}`);
   } catch (err) {
     console.log(err);
   }

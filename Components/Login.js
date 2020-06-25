@@ -13,10 +13,8 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {TextInput, Button, HelperText} from 'react-native-paper';
 import {loginUserDispatch, clearErrorAction} from '../Actions/dataAction';
-import {set} from 'react-native-reanimated';
 
 const width = Dimensions.get('window').width;
-const height = Dimensions.get('window').height;
 
 const Login = (props) => {
   const [state, setState] = useState({

@@ -1,39 +1,21 @@
-import React, {useState, useEffect} from 'react';
+import React from 'react';
 import {
   View,
   Text,
-  Dimensions,
-  TouchableOpacity,
   FlatList,
   ActivityIndicator,
   Image,
-  Animated,
   ScrollView,
   StyleSheet,
+  Dimensions,
 } from 'react-native';
-import {Checkbox} from 'react-native-paper';
 import {unarchiveNoteDispatch, deleteNoteDispatch} from '../Actions/dataAction';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import OptionsMenu from 'react-native-options-menu';
 import OptionIcon from 'react-native-vector-icons/SimpleLineIcons';
-import Drawer from './Drawer';
 
 const ArchiveNotes = (props) => {
-  const [animated, setAnimated] = useState(new Animated.Value(0));
-
-  useEffect(() => {
-    getAnimation();
-  }, []);
-
-  const getAnimation = () => {
-    Animated.timing(animated, {
-      toValue: 1,
-      duration: 350,
-      useNativeDriver: true,
-    }).start();
-  };
-
   const unarchiveNote = async (id) => {
     const {unarchiveNoteDispatch} = props;
     await unarchiveNoteDispatch(id);
@@ -44,7 +26,7 @@ const ArchiveNotes = (props) => {
     await deleteNoteDispatch(id, props.route);
   };
 
-  const Icon = <OptionIcon name="options" size={20} color="#000" />;  
+  const Icon = <OptionIcon name="options" size={20} color="#000" />;
 
   return props.notes === null ? (
     <View style={styles.ActivityIndicator}>
@@ -55,44 +37,35 @@ const ArchiveNotes = (props) => {
       data={props.notes}
       renderItem={({item}) => (
         <ScrollView key={item._id}>
-          <Animated.View
-            style={[
-              styles.animatedView,
-              {
-                transform: [
-                  {
-                    translateX: animated.interpolate({
-                      inputRange: [0, 1],
-                      outputRange: [100, 1],
-                    }),
-                  },
-                ],
-              },
-            ]}>
-            <Checkbox.Android
-              color="#2f89fc"
-              status={item.done ? 'checked' : 'unchecked'}
-            />
-            <Text
-              style={{
-                fontSize: 20,
-                marginLeft: 30,
-                textDecorationLine: item.done ? 'line-through' : 'none',
-              }}>
-              {item.body}
-            </Text>
-            <View style={{position: 'absolute', right: 15, top: 7}}>
-              <OptionsMenu
-                customButton={Icon}
-                destructiveIndex={1}
-                options={['Unarchive', 'Delete']}
-                actions={[
-                  () => unarchiveNote(item._id),
-                  () => deleteNote(item._id),
-                ]}
-              />
+          <View style={styles.container}>
+            <View style={styles.NoteView}>
+              <View style={styles.body}>
+                <Text
+                  style={{
+                    fontSize: 20,
+                    marginLeft: 30,
+                    textDecorationLine: item.done ? 'line-through' : 'none',
+                    opacity: item.done ? 0.3 : 1,
+                  }}>
+                  {item.body}
+                </Text>
+              </View>
+              <View style={styles.optionMenu}>
+                <OptionsMenu
+                  customButton={Icon}
+                  destructiveIndex={1}
+                  options={['Unarchive', 'Delete']}
+                  actions={[
+                    () => unarchiveNote(item._id),
+                    () => deleteNote(item._id),
+                  ]}
+                />
+              </View>
             </View>
-          </Animated.View>
+            <Text style={styles.createdAt}>
+              {new Date(item.createdAt).toLocaleString()}
+            </Text>
+          </View>
         </ScrollView>
       )}
       keyExtractor={(item) => item._id}
@@ -101,9 +74,9 @@ const ArchiveNotes = (props) => {
     <View style={styles.noNotesCont}>
       <Image
         style={{width: 550, height: 400}}
-        source={require('../utils/error-404.png')}
+        source={require('../utils/no-archive.png')}
       />
-      <Text style={styles.noNotesText}>No notes found!</Text>
+      <Text style={styles.noNotesText}>No Archived Notes!</Text>
     </View>
   );
 };
@@ -118,6 +91,7 @@ const mapDispatchToProps = (dispatch) =>
     },
     dispatch,
   );
+
 export default connect(mapStateToProps, mapDispatchToProps)(ArchiveNotes);
 
 const styles = StyleSheet.create({
@@ -126,13 +100,32 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  animatedView: {
+  container: {
+    borderBottomWidth: 0.5,
+    margin: 10,
+  },
+  NoteView: {
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
     padding: 10,
-    margin: 10,
-    borderBottomWidth: 0.5,
+  },
+  body: {
+    width: Dimensions.get('window').width * 0.8,
+    marginVertical: 10,
+  },
+  createdAt: {
+    color: 'grey',
+    fontSize: 12,
+    position: 'absolute',
+    marginTop: 5,
+    right: 0,
+    bottom: 0,
+  },
+  optionMenu: {
+    position: 'absolute',
+    right: 10,
+    top: 0,
   },
   noNotesCont: {
     flex: 1,
