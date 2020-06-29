@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {
   View,
   Text,
@@ -8,6 +8,7 @@ import {
   ScrollView,
   StyleSheet,
   Dimensions,
+  RefreshControl,
 } from 'react-native';
 import {unarchiveNoteDispatch, deleteNoteDispatch} from '../Actions/dataAction';
 import {connect} from 'react-redux';
@@ -16,6 +17,8 @@ import OptionsMenu from 'react-native-options-menu';
 import OptionIcon from 'react-native-vector-icons/SimpleLineIcons';
 
 const ArchiveNotes = (props) => {
+  const [refreshing, setRefreshing] = useState(false);
+
   const unarchiveNote = async (id) => {
     const {unarchiveNoteDispatch} = props;
     await unarchiveNoteDispatch(id);
@@ -26,6 +29,13 @@ const ArchiveNotes = (props) => {
     await deleteNoteDispatch(id, props.route);
   };
 
+  const onRefresh = async () => {
+    const {onComponentMount} = props;
+    setRefreshing(true);
+    await onComponentMount();
+    setRefreshing(false);
+  };
+
   const Icon = <OptionIcon name="options" size={20} color="#000" />;
 
   return props.notes === null ? (
@@ -34,9 +44,12 @@ const ArchiveNotes = (props) => {
     </View>
   ) : props.notes.length >= 1 ? (
     <FlatList
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={() => onRefresh()} />
+      }
       data={props.notes}
       renderItem={({item}) => (
-        <ScrollView key={item._id}>
+        <ScrollView keyboardShouldPersistTaps='always'>
           <View style={styles.container}>
             <View style={styles.NoteView}>
               <View style={styles.body}>

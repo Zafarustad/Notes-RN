@@ -8,21 +8,26 @@ import ArchiveNotes from './ArchiveNotes';
 const Archive = (props) => {
   const {
     data: {archiveNotes},
-    route: {name}
+    route: {name},
   } = props;
 
   useEffect(() => {
+    onComponentMount();
+  }, []);
+
+  const onComponentMount = async () => {
     const {getArchiveUserNotesDispatch} = props;
-    const getArchiveNotes = async () => {
-      await getArchiveUserNotesDispatch();
-    };
-    getArchiveNotes();
-  }, []);  
+    await getArchiveUserNotesDispatch();
+  };
 
   return (
     <>
       <Drawer navigation={props.navigation} />
-      <ArchiveNotes notes={archiveNotes} route={name} />
+      <ArchiveNotes
+        notes={archiveNotes}
+        route={name}
+        onComponentMount={onComponentMount}
+      />
     </>
   );
 };
@@ -37,4 +42,3 @@ const mapDispatchToProps = (dispatch) =>
     dispatch,
   );
 export default connect(mapStateToProps, mapDispatchToProps)(Archive);
-

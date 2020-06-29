@@ -21,7 +21,7 @@ const Home = (props) => {
   }, []);
 
   const onComponentMount = async () => {
-    const {getAuthUserDetailsDispatch, getUserNotesDispatch} = props;
+    const {getAuthUserDetailsDispatch, getUserNotesDispatch} = props;        
     await getAuthUserDetailsDispatch();
     await getUserNotesDispatch();
   };
@@ -30,7 +30,7 @@ const Home = (props) => {
     <>
       <Drawer navigation={props.navigation} />
       <AddNote />
-      <Notes notes={notes} route={name} />
+      <Notes notes={notes} route={name} onComponentMount={onComponentMount}/>
     </>
   );
 };

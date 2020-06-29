@@ -13,12 +13,16 @@ import {
   SUCCESS_MESSAGE,
   NOTE_DONE,
   NOTE_UNDONE,
+  START_EDIT_NOTE,
+  EDIT_NOTE,
+  CANCEL_EDIT,
 } from '../Actions/dataAction';
 
 const initailState = {
   authenticated: null,
   credentials: {},
   notes: null,
+  editNote: null,
   archiveNotes: null,
   errors: null,
   successMessage: null,
@@ -31,8 +35,8 @@ const dataReducer = (state = initailState, action) => {
       return {
         ...state,
         notes: null,
-        archiveNotes: null
-      }
+        archiveNotes: null,
+      };
     }
     case TRIGGER_ERROR: {
       return {
@@ -137,6 +141,33 @@ const dataReducer = (state = initailState, action) => {
 
       return {
         ...state,
+      };
+    }
+
+    case START_EDIT_NOTE: {
+      const editingNote = state.notes.find(
+        (note) => note._id === action.payload,
+      );
+      return {
+        ...state,
+        editNote: editingNote,
+      };
+    }
+
+    case EDIT_NOTE: {
+      const index = state.notes.findIndex(
+        (note) => note._id === action.payload._id,
+      );
+      state.notes[index].body = action.payload.body;      
+      return {
+        ...state,
+      };
+    }
+
+    case CANCEL_EDIT: {
+      return {
+        ...state,
+        editNote: null,
       };
     }
 

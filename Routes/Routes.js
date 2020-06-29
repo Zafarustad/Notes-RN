@@ -41,7 +41,7 @@ const Routes = (props) => {
 
   function CustomDrawerContent(props) {
     return (
-      <DrawerContentScrollView {...props}>
+      <DrawerContentScrollView keyboardShouldPersistTaps="always" {...props}>
         <DrawerItemList {...props} />
         <DrawerItem
           label="Logout"

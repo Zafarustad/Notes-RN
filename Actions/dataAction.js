@@ -15,8 +15,11 @@ export const UNARCHIVE_NOTE = 'UNARCHIVE_NOTE';
 export const DELETE_NOTE = 'DELETE_NOTE';
 export const NOTE_DONE = 'NOTE_DONE';
 export const NOTE_UNDONE = 'NOTE_UNDONE';
-
-const uri = 'https://7dc9b31f7c86.ngrok.io';
+export const START_EDIT_NOTE = 'START_EDIT_NOTE';
+export const EDIT_NOTE = 'EDIT_NOTE';
+export const CANCEL_EDIT = 'CANCEL_EDIT';
+ 
+const uri = 'https://0ae26ce9cffb.ngrok.io';
 
 export const logoutUserAction = () => ({
   type: LOGOUT_USER,
@@ -85,6 +88,20 @@ export const markeNoteUndoneAction = (data) => ({
   type: NOTE_UNDONE,
   payload: data,
 });
+
+export const startEditNoteAction = (data) => ({
+  type: START_EDIT_NOTE,
+  payload: data
+});
+
+export const editNoteAction = (data) => ({
+  type: EDIT_NOTE,
+  payload: data
+})
+
+export const cancelEditAction = () => ({
+  type: CANCEL_EDIT
+})
 
 export const signupUserDispatch = (data) => async (dispatch) => {
   try {
@@ -161,7 +178,7 @@ export const archiveNoteDispatch = (id) => async (dispatch) => {
 
 export const unarchiveNoteDispatch = (id) => async (dispatch) => {
   try {
-    await dispatch(unarchiveNoteAction(id));
+    dispatch(unarchiveNoteAction(id));
     await axios.put(`${uri}/unarchive/${id}`);
     await dispatch(getUserNotesDispatch());
     dispatch(triggorSuccessMessage('Note Unarchived!'));
@@ -206,3 +223,14 @@ export const markeNoteUndoneDispatch = (id, value) => async (dispatch) => {
     console.log(err);
   }
 };
+
+export const editNoteDispatch = (id, data) => async dispatch => {
+  try {
+    const res = await axios.put(`${uri}/edit/${id}`, data);
+    await dispatch(editNoteAction(res.data));
+    dispatch(cancelEditAction())
+  } catch (err) {
+    console.log(err);
+  }
+}
+ 

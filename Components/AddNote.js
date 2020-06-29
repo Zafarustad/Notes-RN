@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {View, Dimensions, StyleSheet} from 'react-native';
+import {View, Dimensions, StyleSheet, TouchableOpacity} from 'react-native';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {TextInput, HelperText} from 'react-native-paper';
@@ -42,13 +42,12 @@ const AddNote = (props) => {
         />
         {errors && <HelperText type="error">{errors.body}</HelperText>}
       </View>
-      <Icon
-        name="ios-add-circle"
-        size={50}
-        color="#2f89fc"
+      <TouchableOpacity
+        activeOpacity={0.5}
         style={{marginLeft: 10}}
-        onPress={() => handleSubmit()}
-      />
+        onPress={() => handleSubmit()}>
+        <Icon name="ios-add-circle" size={50} color="#2f89fc" />
+      </TouchableOpacity>
     </View>
   );
 };

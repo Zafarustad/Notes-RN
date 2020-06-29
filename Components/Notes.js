@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {
   View,
   Text,
@@ -8,6 +8,7 @@ import {
   ScrollView,
   StyleSheet,
   Dimensions,
+  RefreshControl,
 } from 'react-native';
 import {Checkbox} from 'react-native-paper';
 import {connect} from 'react-redux';
@@ -19,22 +20,35 @@ import {
   archiveNoteDispatch,
   markeNoteDoneDispatch,
   markeNoteUndoneDispatch,
+  startEditNoteAction,
 } from '../Actions/dataAction';
+import EditNote from './EditNote';
 
 const Notes = ({
+  data: {editNote},
   notes,
   deleteNoteDispatch,
   archiveNoteDispatch,
   markeNoteDoneDispatch,
   markeNoteUndoneDispatch,
+  startEditNoteAction,
+  onComponentMount,
   route,
 }) => {
+  const [refreshing, setRefreshing] = useState(false);
+
   const deleteNote = async (id) => {
     await deleteNoteDispatch(id, route);
   };
 
   const archiveNote = async (id) => {
     await archiveNoteDispatch(id);
+  };
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await onComponentMount();
+    setRefreshing(false);
   };
 
   const Icon = <OptionIcon name="options" size={20} color="#000" />;
@@ -46,45 +60,61 @@ const Notes = ({
   ) : notes.length >= 1 ? (
     <>
       <FlatList
+        keyboardShouldPersistTaps="always"
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={() => onRefresh()}
+          />
+        }
         data={notes}
         keyExtractor={(item) => item._id}
         renderItem={({item}) => (
           <React.Fragment key={item._id}>
-            <ScrollView>
+            <ScrollView keyboardShouldPersistTaps="always">
               <View style={styles.container}>
-                <View style={styles.noteView}>
-                  <Checkbox.Android
-                    color="#2f89fc"
-                    status={item.done ? 'checked' : 'unchecked'}
-                    onPress={
-                      !item.done
-                        ? () => markeNoteDoneDispatch(item._id, true)
-                        : () => markeNoteUndoneDispatch(item._id, false)
-                    }
-                  />
-                  <View style={styles.body}>
-                    <Text
-                      style={{
-                        fontSize: 20,
-                        marginLeft: 30,
-                        textDecorationLine: item.done ? 'line-through' : 'none',
-                        opacity: item.done ? 0.3 : 1,
-                      }}>
-                      {item.body}
-                    </Text>
+                {editNote && editNote._id === item._id ? (
+                  <View style={styles.noteView}>
+                    <EditNote note={editNote} />
                   </View>
-                  <View style={styles.optionMenu}>
-                    <OptionsMenu
-                      customButton={Icon}
-                      destructiveIndex={1}
-                      options={['Archive', 'Delete']}
-                      actions={[
-                        () => archiveNote(item._id),
-                        () => deleteNote(item._id),
-                      ]}
+                ) : (
+                  <View style={styles.noteView}>
+                    <Checkbox.Android
+                      color="#2f89fc"
+                      status={item.done ? 'checked' : 'unchecked'}
+                      onPress={
+                        !item.done
+                          ? () => markeNoteDoneDispatch(item._id, true)
+                          : () => markeNoteUndoneDispatch(item._id, false)
+                      }
                     />
+                    <View style={styles.body}>
+                      <Text
+                        style={{
+                          fontSize: 20,
+                          marginLeft: 30,
+                          textDecorationLine: item.done
+                            ? 'line-through'
+                            : 'none',
+                          opacity: item.done ? 0.3 : 1,
+                        }}>
+                        {item.body}
+                      </Text>
+                    </View>
+                    <View style={styles.optionMenu}>
+                      <OptionsMenu
+                        customButton={Icon}
+                        destructiveIndex={1}
+                        options={['Archive', 'Edit', 'Delete']}
+                        actions={[
+                          () => archiveNote(item._id),
+                          () => startEditNoteAction(item._id),
+                          () => deleteNote(item._id),
+                        ]}
+                      />
+                    </View>
                   </View>
-                </View>
+                )}
                 <Text style={styles.createdAt}>
                   {new Date(item.createdAt).toLocaleString()}
                 </Text>
@@ -114,6 +144,7 @@ const mapDispatchToProps = (dispatch) =>
       archiveNoteDispatch,
       markeNoteDoneDispatch,
       markeNoteUndoneDispatch,
+      startEditNoteAction,
     },
     dispatch,
   );

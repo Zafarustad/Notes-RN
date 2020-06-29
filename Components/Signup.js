@@ -57,10 +57,9 @@ const Signup = (props) => {
   } = props;
   return (
     <>
-      <ScrollView>
+      <ScrollView keyboardShouldPersistTaps='always'>
         <KeyboardAvoidingView behavior="position">
           <View style={styles.form}>
-            {/* <Text style={styles.headerText}>Notes</Text> */}
             <Image
               style={{width: 250, height: 100}}
               source={require('../utils/notes-logo.png')}
